@@ -2,41 +2,30 @@
 
 ## Run Gravitee APIM on your Mac
 
-This local Community Edition setup runs the APIM Gateway, Management API, Console, and Developer Portal in Docker Compose. A bundled Helm chart installs MongoDB in Docker Desktop Kubernetes and stores its data in a persistent volume. Elasticsearch-backed analytics and request reporting are disabled. The first launch downloads public container images.
+Docker Compose runs the Gateway, Management API, Console, and Developer Portal. A dedicated local kind cluster runs MongoDB from the bundled Helm chart. Elasticsearch-backed analytics and request reporting are disabled.
 
 ### Prerequisites
 
-- Start Docker Desktop and enable its Kubernetes cluster.
-- Install Helm and make sure `kubectl --context docker-desktop get nodes` shows a ready node.
-- Free local ports 27017 and 8082–8085. Use a dedicated local cluster because MongoDB runs without authentication.
+- Install and start Docker Desktop.
+- Install kind, Helm, and kubectl, for example with `brew install kind helm kubectl`.
+- Free local ports 27017 and 8082–8085. The first startup downloads public images.
 
-### Start the stack
+### Start
 
-From the repository root, install MongoDB into Docker Desktop's cluster.
-
-```sh
-helm upgrade --install mongodb ./charts/mongodb --kube-context docker-desktop \
-  --namespace gravitee-local --create-namespace --wait --timeout 5m
-```
-
-Run the port-forward and leave this terminal open while using APIM. The Compose containers reach this Mac-side listener through Docker Desktop's `host.docker.internal` hostname.
+From the cloned repository:
 
 ```sh
-kubectl --context docker-desktop --namespace gravitee-local \
-  port-forward service/mongodb 27017:27017
+make up
 ```
 
-In a second terminal, from the repository root, start APIM.
+Open the [Console](http://localhost:8084) or the [Developer Portal](http://localhost:8085). Sign in with `admin` / `admin`.
+
+`make up` reuses the `gravitee-local` kind cluster if it already exists. It uses a separate kubeconfig at `~/.kube/gravitee-local-kind.yaml` and starts a background loopback port-forward for MongoDB. For port-forward diagnostics, see `~/.kube/gravitee-local-mongodb-forward.log`.
+
+### Stop and remove
 
 ```sh
-docker compose up -d
-docker compose ps
+make down
 ```
 
-Open the Console at [localhost:8084](http://localhost:8084) or the Developer Portal at [localhost:8085](http://localhost:8085). The default local login is `admin` / `admin`. The Gateway listens on port 8082 and the Management API listens on port 8083.
-
-If the UI loads before the Management API is ready, wait for initialization and refresh. To diagnose startup or database connectivity issues, confirm that the port-forward is running and check `docker compose logs gateway management-api`.
-
-### Stop the stack
-
-Run `docker compose down` and stop the port-forward with Ctrl+C. MongoDB remains installed with its data so you can restart APIM by reopening the port-forward and running Compose again.
+This removes the Compose services and network, stops the MongoDB port-forward, and deletes the dedicated kind cluster **including its MongoDB data**. The next `make up` starts with an empty database.
