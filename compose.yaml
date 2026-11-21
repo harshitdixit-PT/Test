@@ -1,0 +1,36 @@
+services:
+  gateway:
+    image: graviteeio/apim-gateway:${APIM_VERSION:-4.8.0}
+    environment:
+      gravitee_management_mongodb_uri: &mongo_uri mongodb://host.docker.internal:27017/gravitee?directConnection=true
+      gravitee_ratelimit_mongodb_uri: *mongo_uri
+      gravitee_reporters_elasticsearch_enabled: "false"
+    ports:
+      - "127.0.0.1:8082:8082"
+
+  management-api:
+    image: graviteeio/apim-management-api:${APIM_VERSION:-4.8.0}
+    environment:
+      gravitee_management_mongodb_uri: *mongo_uri
+      gravitee_analytics_type: none
+      gravitee_installation_standalone_portal_url: http://localhost:8085
+    ports:
+      - "127.0.0.1:8083:8083"
+
+  console:
+    image: graviteeio/apim-management-ui:${APIM_VERSION:-4.8.0}
+    environment:
+      MGMT_API_URL: http://localhost:8083/management/organizations/DEFAULT/environments/DEFAULT/
+    depends_on:
+      - management-api
+    ports:
+      - "127.0.0.1:8084:8080"
+
+  portal:
+    image: graviteeio/apim-portal-ui:${APIM_VERSION:-4.8.0}
+    environment:
+      PORTAL_API_URL: http://localhost:8083/portal/environments/DEFAULT
+    depends_on:
+      - management-api
+    ports:
+      - "127.0.0.1:8085:8080"
