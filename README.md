@@ -2,7 +2,7 @@
 
 ## Run Gravitee APIM on your Mac
 
-Docker Compose defaults to Gravitee APIM `4.12.27` and runs the Gateway, Management API, Console, and Developer Portal. A dedicated local kind cluster runs MongoDB from the bundled Helm chart. Elasticsearch-backed analytics and request reporting are disabled.
+Docker Compose defaults to Gravitee APIM `4.13.6` and runs the Gateway, Management API, Console, and Developer Portal. A dedicated local kind cluster runs MongoDB from the bundled Helm chart. Elasticsearch-backed analytics and request reporting are disabled.
 
 For a step-by-step setup without Make, see the [manual deployment guide](manual/README.md).
 
@@ -15,6 +15,7 @@ For a step-by-step setup without Make, see the [manual deployment guide](manual/
 ### Start
 
 For a lab with an existing 4.10.38 database, follow the [in-place upgrade procedure](#upgrade-an-existing-41038-lab) first.
+For a lab on 4.12.27, see [Upgrade from 4.12.27 to 4.13.6](#upgrade-from-41227-to-4136).
 
 From the cloned repository:
 
@@ -74,7 +75,7 @@ curl -fsS http://localhost:8084/ >/dev/null
 curl -fsS http://localhost:8085/ >/dev/null
 ```
 
-Sign in to the Console, check that your APIs and applications are present, and call your recorded Gateway route. Republish affected New Developer Portal content through **Navigation items**, then verify subscriptions and documentation links you use. Complete these checks on 4.12.27 before preparing the next upgrade to 4.13.6.
+Sign in to the Console, check that your APIs and applications are present, and call your recorded Gateway route. Republish affected New Developer Portal content through **Navigation items**, then verify subscriptions and documentation links you use. Complete these checks on 4.12.27 before starting the [4.13.6 upgrade](#upgrade-from-41227-to-4136).
 
 #### Roll back to 4.10.38
 
@@ -90,6 +91,20 @@ lab_mongo -i -- mongorestore --archive --gzip --stopOnError --nsInclude 'gravite
 ```
 
 Set `export APIM_VERSION=4.10.38` and repeat the Management API startup and smoke checks above. Keep the override set when starting the rolled-back lab.
+
+### Upgrade from 4.12.27 to 4.13.6
+
+Run these commands from the existing Compose project directory with the kind cluster and MongoDB port-forward active. Stop the 4.12 services before starting the upgraded Management API. Start the Management API first.
+
+```sh
+export APIM_VERSION=4.13.6
+docker compose stop &&
+docker compose up -d --no-deps management-api
+docker compose logs --tail=150 management-api
+curl -fsS http://localhost:8083/portal/environments/DEFAULT/configuration >/dev/null
+```
+
+After the migration logs and Portal API check pass, run `docker compose up -d --wait --wait-timeout 180 gateway console portal` and repeat the smoke checks above. Verify the API routes and Developer Portal documentation you use. APIM 4.13 defaults to normalizing paths before routing and moves eligible New Developer Portal documentation to its API on startup. [APIM 4.13 release notes](https://github.com/gravitee-io/gravitee-platform-docs/blob/main/docs/apim/4.13/release-information/release-notes/apim-4.13.md)
 
 ### Stop and remove
 
