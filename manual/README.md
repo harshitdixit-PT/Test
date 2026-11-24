@@ -1,8 +1,9 @@
 # Deploy Gravitee APIM manually on macOS
 
-Run Gravitee APIM Community Edition on your Mac with Docker Desktop. The Gateway, Management API, Console, and Developer Portal run in Docker Compose. MongoDB runs in a dedicated kind cluster on the same Docker engine. The bundled Compose file defaults to APIM 4.12.27, and the bundled Helm chart uses MongoDB 7.0. The first run downloads public images. All runtime services are local. [Gravitee APIM 4.10 Docker Compose reference for the original lab topology](https://documentation.gravitee.io/apim/4.10/self-hosted-installation-guides/docker/docker-compose)
+Run Gravitee APIM Community Edition on your Mac with Docker Desktop. The Gateway, Management API, Console, and Developer Portal run in Docker Compose. MongoDB runs in a dedicated kind cluster on the same Docker engine. The bundled Compose file defaults to APIM 4.13.6, and the bundled Helm chart uses MongoDB 7.0. The first run downloads public images. All runtime services are local. [Gravitee APIM 4.10 Docker Compose reference for the original lab topology](https://documentation.gravitee.io/apim/4.10/self-hosted-installation-guides/docker/docker-compose)
 
 For an existing 4.10.38 database, follow the [in-place upgrade procedure](../README.md#upgrade-an-existing-41038-lab) before starting the new images.
+For an existing 4.12.27 database, follow the [4.13.6 upgrade procedure](../README.md#upgrade-from-41227-to-4136) before starting 4.13.6.
 
 ## 1. Install the tools and start Docker Desktop
 
