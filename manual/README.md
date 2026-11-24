@@ -1,6 +1,8 @@
 # Deploy Gravitee APIM manually on macOS
 
-Run Gravitee APIM Community Edition on your Mac with Docker Desktop. The Gateway, Management API, Console, and Developer Portal run in Docker Compose. MongoDB runs in a dedicated kind cluster on the same Docker engine. The bundled Compose file defaults to APIM 4.10.38, and the bundled Helm chart uses MongoDB 7.0. The first run downloads public images. All runtime services are local. [Gravitee APIM 4.10 Docker Compose guide](https://documentation.gravitee.io/apim/4.10/self-hosted-installation-guides/docker/docker-compose)
+Run Gravitee APIM Community Edition on your Mac with Docker Desktop. The Gateway, Management API, Console, and Developer Portal run in Docker Compose. MongoDB runs in a dedicated kind cluster on the same Docker engine. The bundled Compose file defaults to APIM 4.12.27, and the bundled Helm chart uses MongoDB 7.0. The first run downloads public images. All runtime services are local. [Gravitee APIM 4.10 Docker Compose reference for the original lab topology](https://documentation.gravitee.io/apim/4.10/self-hosted-installation-guides/docker/docker-compose)
+
+For an existing 4.10.38 database, follow the [in-place upgrade procedure](../README.md#upgrade-an-existing-41038-lab) before starting the new images.
 
 ## 1. Install the tools and start Docker Desktop
 
@@ -110,7 +112,7 @@ docker compose up -d --wait --wait-timeout 180
 docker compose ps
 ```
 
-The first command checks the MongoDB listener. Compose validates the project, downloads the four APIM images, and starts the services in the background. `docker compose ps` shows container state and published ports. [Gravitee APIM 4.10 Docker Compose guide](https://documentation.gravitee.io/apim/4.10/self-hosted-installation-guides/docker/docker-compose) · [Docker Compose up reference](https://docs.docker.com/reference/cli/docker/compose/up/)
+The first command checks the MongoDB listener. Compose validates the project, downloads the four APIM images, and starts the services in the background. `docker compose ps` shows container state and published ports. [Gravitee APIM 4.10 Docker Compose reference for the original lab topology](https://documentation.gravitee.io/apim/4.10/self-hosted-installation-guides/docker/docker-compose) · [Docker Compose up reference](https://docs.docker.com/reference/cli/docker/compose/up/)
 
 The repository's Compose configuration connects the Gateway and Management API to `mongodb://host.docker.internal:27017/gravitee?directConnection=true`. The Gateway also uses MongoDB for rate limits. The Management API sets `gravitee_analytics_type=none`, and the Gateway sets `gravitee_reporters_elasticsearch_enabled=false`. Elasticsearch-backed analytics and request reporting are unavailable in this setup. [Gravitee Management API configuration](https://documentation.gravitee.io/apim/4.10/configure-and-manage-the-platform/management-api) · [Gravitee Gateway configuration](https://documentation.gravitee.io/apim/4.10/configure-and-manage-the-platform/gravitee-gateway) · [Gravitee example disabling the Elasticsearch reporter](https://documentation.gravitee.io/apim/4.10/hybrid-installation-and-configuration-guides/classic-cloud/docker/docker-compose)
 
@@ -153,7 +155,7 @@ kubectl --kubeconfig "$GRAVITEE_KUBECONFIG" --context kind-gravitee-local \
   --namespace gravitee-local logs mongodb-0
 ```
 
-The pod events show scheduling, storage, and image pull status. MongoDB logs show database startup errors. [Gravitee APIM 4.10 Docker Compose guide](https://documentation.gravitee.io/apim/4.10/self-hosted-installation-guides/docker/docker-compose) · [Docker Compose logs reference](https://docs.docker.com/reference/cli/docker/compose/logs/)
+The pod events show scheduling, storage, and image pull status. MongoDB logs show database startup errors. [Gravitee APIM 4.10 Docker Compose reference for the original lab topology](https://documentation.gravitee.io/apim/4.10/self-hosted-installation-guides/docker/docker-compose) · [Docker Compose logs reference](https://docs.docker.com/reference/cli/docker/compose/logs/)
 
 ## 9. Shut down or remove the stack
 
