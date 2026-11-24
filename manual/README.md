@@ -1,6 +1,6 @@
 # Deploy Gravitee APIM manually on macOS
 
-Run Gravitee APIM Community Edition on your Mac with Docker Desktop. The Gateway, Management API, Console, and Developer Portal run in Docker Compose. MongoDB runs in a dedicated kind cluster on the same Docker engine. The bundled Compose file defaults to APIM 4.8.0, and the bundled Helm chart uses MongoDB 7.0. The first run downloads public images. All runtime services are local. [Gravitee APIM 4.8 Docker Compose guide](https://documentation.gravitee.io/apim/4.8/self-hosted-installation-guides/docker/docker-compose)
+Run Gravitee APIM Community Edition on your Mac with Docker Desktop. The Gateway, Management API, Console, and Developer Portal run in Docker Compose. MongoDB runs in a dedicated kind cluster on the same Docker engine. The bundled Compose file defaults to APIM 4.10.38, and the bundled Helm chart uses MongoDB 7.0. The first run downloads public images. All runtime services are local. [Gravitee APIM 4.10 Docker Compose guide](https://documentation.gravitee.io/apim/4.10/self-hosted-installation-guides/docker/docker-compose)
 
 ## 1. Install the tools and start Docker Desktop
 
@@ -43,7 +43,7 @@ Clone into a new directory. If you already have the repo, go to that checkout in
 
 ```sh
 cd "$HOME/Documents"
-git clone https://github.com/harshitdixit-PT/Test.git gravite-docker-stack
+git clone https://github.com/harshitdixit-PT/gravitee-deploy-dockerCompose.git gravite-docker-stack
 cd gravite-docker-stack
 ```
 
@@ -84,7 +84,7 @@ kubectl --kubeconfig "$GRAVITEE_KUBECONFIG" --context kind-gravitee-local \
   --namespace gravitee-local get statefulset,pod,service,pvc
 ```
 
-Lint checks the chart. The Helm command creates or updates the release in the `gravitee-local` namespace and waits for it to be ready. The chart creates one MongoDB replica, a Service on port 27017, and a 2 GiB persistent volume claim. Expect `mongodb-0` to be `1/1 Running` and its claim to be `Bound`. MongoDB runs without authentication in this dedicated local cluster. [Helm upgrade reference](https://helm.sh/docs/helm/helm_upgrade/) · [Gravitee APIM 4.8 repositories](https://documentation.gravitee.io/apim/4.8/prepare-a-production-environment/repositories)
+Lint checks the chart. The Helm command creates or updates the release in the `gravitee-local` namespace and waits for it to be ready. The chart creates one MongoDB replica, a Service on port 27017, and a 2 GiB persistent volume claim. Expect `mongodb-0` to be `1/1 Running` and its claim to be `Bound`. MongoDB runs without authentication in this dedicated local cluster. [Helm upgrade reference](https://helm.sh/docs/helm/helm_upgrade/) · [Gravitee APIM 4.10 repositories](https://documentation.gravitee.io/apim/4.10/prepare-a-production-environment/repositories)
 
 ## 5. Forward MongoDB to the Mac
 
@@ -110,9 +110,9 @@ docker compose up -d --wait --wait-timeout 180
 docker compose ps
 ```
 
-The first command checks the MongoDB listener. Compose validates the project, downloads the four APIM images, and starts the services in the background. `docker compose ps` shows container state and published ports. [Gravitee APIM 4.8 Docker Compose guide](https://documentation.gravitee.io/apim/4.8/self-hosted-installation-guides/docker/docker-compose) · [Docker Compose up reference](https://docs.docker.com/reference/cli/docker/compose/up/)
+The first command checks the MongoDB listener. Compose validates the project, downloads the four APIM images, and starts the services in the background. `docker compose ps` shows container state and published ports. [Gravitee APIM 4.10 Docker Compose guide](https://documentation.gravitee.io/apim/4.10/self-hosted-installation-guides/docker/docker-compose) · [Docker Compose up reference](https://docs.docker.com/reference/cli/docker/compose/up/)
 
-The repository's Compose configuration connects the Gateway and Management API to `mongodb://host.docker.internal:27017/gravitee?directConnection=true`. The Gateway also uses MongoDB for rate limits. The Management API sets `gravitee_analytics_type=none`, and the Gateway sets `gravitee_reporters_elasticsearch_enabled=false`. Elasticsearch-backed analytics and request reporting are unavailable in this setup. [Gravitee Management API configuration](https://documentation.gravitee.io/apim/4.8/configure-and-manage-the-platform/management-api) · [Gravitee Gateway configuration](https://documentation.gravitee.io/apim/4.8/configure-and-manage-the-platform/gravitee-gateway) · [Gravitee example disabling the Elasticsearch reporter](https://documentation.gravitee.io/apim/4.8/hybrid-installation-and-configuration-guides/classic-cloud/docker/docker-compose)
+The repository's Compose configuration connects the Gateway and Management API to `mongodb://host.docker.internal:27017/gravitee?directConnection=true`. The Gateway also uses MongoDB for rate limits. The Management API sets `gravitee_analytics_type=none`, and the Gateway sets `gravitee_reporters_elasticsearch_enabled=false`. Elasticsearch-backed analytics and request reporting are unavailable in this setup. [Gravitee Management API configuration](https://documentation.gravitee.io/apim/4.10/configure-and-manage-the-platform/management-api) · [Gravitee Gateway configuration](https://documentation.gravitee.io/apim/4.10/configure-and-manage-the-platform/gravitee-gateway) · [Gravitee example disabling the Elasticsearch reporter](https://documentation.gravitee.io/apim/4.10/hybrid-installation-and-configuration-guides/classic-cloud/docker/docker-compose)
 
 ## 7. Open and verify Gravitee
 
@@ -132,7 +132,7 @@ curl -sS -o /dev/null -w 'Portal API %{http_code}\n' \
   http://localhost:8083/portal/environments/DEFAULT/configuration
 ```
 
-The Gateway root can return HTTP 404 on a fresh deployment. To exercise the Gateway, create and deploy a test API and call its configured context path. [Gravitee APIM 4.8 local verification and credentials](https://documentation.gravitee.io/apim/4.8/getting-started/local-install-with-docker) · [Create and publish an API with Gravitee APIM 4.8](https://documentation.gravitee.io/apim/4.8/how-to-guides/use-case-tutorials/create-and-publish-an-api-using-the-management-api)
+The Gateway root can return HTTP 404 on a fresh deployment. To exercise the Gateway, create and deploy a test API and call its configured context path. [Gravitee APIM 4.10 local verification and credentials](https://documentation.gravitee.io/apim/4.10/getting-started/local-install-with-docker) · [Create and publish an API with Gravitee APIM 4.10](https://documentation.gravitee.io/apim/4.10/how-to-guides/use-case-tutorials/create-and-publish-an-api-using-the-management-api)
 
 ## 8. Diagnose startup problems
 
@@ -153,7 +153,7 @@ kubectl --kubeconfig "$GRAVITEE_KUBECONFIG" --context kind-gravitee-local \
   --namespace gravitee-local logs mongodb-0
 ```
 
-The pod events show scheduling, storage, and image pull status. MongoDB logs show database startup errors. [Gravitee APIM 4.8 Docker Compose guide](https://documentation.gravitee.io/apim/4.8/self-hosted-installation-guides/docker/docker-compose) · [Docker Compose logs reference](https://docs.docker.com/reference/cli/docker/compose/logs/)
+The pod events show scheduling, storage, and image pull status. MongoDB logs show database startup errors. [Gravitee APIM 4.10 Docker Compose guide](https://documentation.gravitee.io/apim/4.10/self-hosted-installation-guides/docker/docker-compose) · [Docker Compose logs reference](https://docs.docker.com/reference/cli/docker/compose/logs/)
 
 ## 9. Shut down or remove the stack
 

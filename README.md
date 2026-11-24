@@ -2,7 +2,7 @@
 
 ## Run Gravitee APIM on your Mac
 
-Docker Compose runs the Gateway, Management API, Console, and Developer Portal. A dedicated local kind cluster runs MongoDB from the bundled Helm chart. Elasticsearch-backed analytics and request reporting are disabled.
+Docker Compose defaults to Gravitee APIM `4.10.38` and runs the Gateway, Management API, Console, and Developer Portal. A dedicated local kind cluster runs MongoDB from the bundled Helm chart. Elasticsearch-backed analytics and request reporting are disabled.
 
 For a step-by-step setup without Make, see the [manual deployment guide](manual/README.md).
 
